@@ -29,16 +29,20 @@ from hycohanz.desktop import (quit_application,
                               close_current_project, 
                               get_projects, 
                               close_all_projects, 
-                              close_all_projects_except_current)
+                              close_all_projects_except_current,
+                              save_as_project)
 
 from hycohanz.project import *
 
 from hycohanz.property import ( add_property,
                                 set_variable,
+                                add_property_project
                                 )
 
 from hycohanz.design import (get_module, 
-                             set_active_editor)
+                             set_active_editor,
+                             solve_optimetrics,
+                             solve)
 
 from hycohanz.expression import Expression
 from hycohanz.modeler3d import *
@@ -46,19 +50,31 @@ from hycohanz.material import ( add_material,
                                 does_material_exist,
                                 )
 
-from hycohanz.analysis_setup import (insert_frequency_sweep, 
-                                     insert_analysis_setup)
+from hycohanz.analysis_setup import (insert_frequency_sweep_linear_discrete,
+                                     insert_analysis_setup,
+                                     insert_frequency_sweep_linear_interpolating)
+
+from hycohanz.optimetrics import insert_optimetrics_setup
 
 from hycohanz.boundarysetup import (assign_perfect_e, 
                                     assign_radiation,
                                     assign_perfect_h,
-                                    assign_waveport_multimode)
+                                    assign_waveport_multimode,
+                                    assign_master,
+                                    assign_slave,
+                                    assign_floquet,
+                                    assign_lumpedRLC,
+                                    assign_box_master_and_slave,
+                                    assign_box_floquet)
                                     
 from hycohanz.fieldscalculator import (enter_vol, 
                                        calc_op, 
                                        clc_eval, 
                                        enter_qty, 
                                        get_top_entry_value)
+
+from hycohanz.report_and_export import (create_report,
+                                        export_to_file)
 
 class App():
     """

@@ -78,3 +78,18 @@ def solve(oDesign,setup_name_list):
     
     """
     return oDesign.Solve([setup_name_list])
+
+#Author: Winerly
+def solve_optimetrics(oDesign, op_name):
+    """
+    Solve optimetrics setup
+
+    :param oDesign: pywin32 COMObject
+        The HFSS design to which this function is applied.
+    :param op_name: str
+        Optimetrics name.
+    :return: None
+    """
+    oOptimetricsSetup = oDesign.GetModule("Optimetrics")
+
+    return oOptimetricsSetup.SolveSetup(op_name)

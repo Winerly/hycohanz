@@ -90,6 +90,7 @@ design.  Please use from __future__ import division in the calling code.""")
         """
         return Expression('-(' + self.expr + ')')
 
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()

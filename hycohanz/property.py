@@ -90,4 +90,23 @@ def get_variables(oProject,oDesign=''):
         variable_list = list(oDesign.GetVariables())
     return map(str,variable_list)
 
+def add_property_project(oProject, name, value):
+    propserversarray = ["NAME:PropServers", "ProjectVariables"]
+
+    newpropsarray = ["NAME:NewProps",
+                     ["NAME:" + name,
+                      "PropType:=", "VariableProp",
+                      "UserDef:=", True,
+                      "Value:=", value]]
+
+    changepropsarray = ["NAME:ChangedProps",
+                        ["NAME:" + name,
+                         "Value:=", value],
+                        ["NAME:" + name,
+                         "Value:=", value]]
+
+    proptabarray = ["NAME:ProjectVariableTab", propserversarray, newpropsarray, changepropsarray]
+
+    oProject.ChangeProperty(["NAME:AllTabs", proptabarray])
+
 

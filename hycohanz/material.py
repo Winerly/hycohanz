@@ -72,7 +72,7 @@ def add_material(oDesktop,
                     "lande_g_factor:=", lande_g,
                     "delta_H:=", delta_h]
         oDefinitionManager = oProject.GetDefinitionManager()
-        return oDefinitionManager.AddMAterial(mat_param)
+        return oDefinitionManager.AddMaterial(mat_param)
 
 
 def does_material_exist(oProject,material_name):

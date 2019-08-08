@@ -13,6 +13,8 @@ import warnings
 
 from hycohanz.expression import Expression as Ex
 
+from hycohanz.box import Box
+
 warnings.simplefilter('default')
 
 def get_matched_object_name(oEditor, name_filter="*"):
@@ -241,7 +243,7 @@ def create_circle(oEditor, xc, yc, zc, radius,
     yc : float or hycohanz Expression object
     zc : float or hycohanz Expression object
         The x, y, and z coordinates of the center of the circle.
-    radius : float
+    radius : float or hycohanz Expression object
         The radius of the circle.
     WhichAxis : str
         The axis normal to the circle.  Can be 'X', 'Y', or 'Z'.
@@ -289,6 +291,80 @@ def create_circle(oEditor, xc, yc, zc, radius,
                        "Solveinside:=", Solveinside]
 
     return oEditor.CreateCircle(circleparams, attributesarray)
+
+
+def create_ellipse(oEditor, xc, yc, zc, Majradius,Ratio,
+                  WhichAxis='Z',
+                  NumSegments=0,
+                  Name='Ellipse1',
+                  Flags='',
+                  Color=(132, 132, 193),
+                  Transparency=0,
+                  PartCoordinateSystem='Global',
+                  MaterialName='"vacuum"',
+                  Solveinside=True):
+    """
+    Create a circle primitive.
+
+    Parameters
+    ----------
+    oEditor : pywin32 COMObject
+        The HFSS editor in which the operation will be performed.
+    xc : float or hycohanz Expression object
+    yc : float or hycohanz Expression object
+    zc : float or hycohanz Expression object
+        The x, y, and z coordinates of the center of the circle.
+    MajRadius : float or str
+        The x-radius of the circle.
+    Ratio : float or str
+        The ratio y-radius to x-radius.
+    WhichAxis : str
+        The axis normal to the circle.  Can be 'X', 'Y', or 'Z'.
+    NumSegments : int
+        If 0, the circle is not segmented.  Otherwise, the circle is
+        segmented into NumSegments sides.
+    Name : str
+        The requested name of the object.  If this is not available, HFSS
+        will assign a different name, which is returned by this function.
+    Flags : str
+        Flags associated with this object.  See HFSS help for details.
+    Color : tuple of length=3
+        RGB components of the circle
+    Transparency : float between 0 and 1
+        Fractional transparency.  0 is opaque and 1 is transparent.
+    PartCoordinateSystem : str
+        The name of the coordinate system in which the object is drawn.
+    MaterialName : str
+        Name of the material to assign to the object.  Name must be surrounded
+        by double quotes.
+    SolveInside : bool
+        Whether to mesh the interior of the object and solve for the fields
+        inside.
+
+    Returns
+    -------
+    str
+        The actual name of the created object.
+    """
+    circleparams = ["NAME:CircleParameters",
+                    "XCenter:=", Ex(xc).expr,
+                    "YCenter:=", Ex(yc).expr,
+                    "ZCenter:=", Ex(zc).expr,
+                    "MajRadius:=", Ex(Majradius).expr,
+                    "Ratio:=", Ex(Ratio).expr,
+                    "WhichAxis:=", str(WhichAxis),
+                    "NumSegments:=", str(NumSegments)]
+
+    attributesarray = ["NAME:Attributes",
+                       "Name:=", Name,
+                       "Flags:=", Flags,
+                       "Color:=", "({r} {g} {b})".format(r=Color[0], g=Color[1], b=Color[2]),
+                       "Transparency:=", str(Transparency),
+                       "PartCoordinateSystem:=", PartCoordinateSystem,
+                       "MaterialName:=", MaterialName,
+                       "Solveinside:=", Solveinside]
+
+    return oEditor.CreateEllipse(circleparams, attributesarray)
 
 def create_sphere(oEditor, x, y, z, radius,
                   Name="Sphere1",
@@ -359,17 +435,17 @@ def create_sphere(oEditor, x, y, z, radius,
     
     return part
 
-def create_box( oEditor, 
-                xpos, 
-                ypos, 
-                zpos, 
-                xsize, 
+def create_box( oEditor,
+                xpos,
+                ypos,
+                zpos,
+                xsize,
                 ysize,
                 zsize,
-                Name='Box1', 
-                Flags='', 
-                Color=(132, 132, 193), 
-                Transparency=0, 
+                Name='Box1',
+                Flags='',
+                Color=(132, 132, 193),
+                Transparency=0,
                 PartCoordinateSystem='Global',
                 UDMId='',
                 MaterialValue='"vacuum"',
@@ -394,7 +470,7 @@ def create_box( oEditor,
     zsize : float or hycohanz Expression object
         x-, y-, and z-dimensions of the box
     Name : str
-        The requested name of the object.  If this is not available, HFSS 
+        The requested name of the object.  If this is not available, HFSS
         will assign a different name, which is returned by this function.
     Flags : str
         Flags associated with this object.  See HFSS Scripting Guide for details.
@@ -405,10 +481,10 @@ def create_box( oEditor,
     PartCoordinateSystem : str
         The name of the coordinate system in which the object is drawn.
     MaterialName : str
-        Name of the material to assign to the object.  Name must be surrounded 
+        Name of the material to assign to the object.  Name must be surrounded
         by double quotes.
     SolveInside : bool
-        Whether to mesh the interior of the object and solve for the fields 
+        Whether to mesh the interior of the object and solve for the fields
         inside.
     IsCovered : bool
         Whether the rectangle is has a surface or has only edges.
@@ -437,7 +513,104 @@ def create_box( oEditor,
                     "MaterialValue:=", MaterialValue,
                     "SolveInside:=", SolveInside]
 
-    return oEditor.CreateBox(BoxParameters, Attributes)    
+    return oEditor.CreateBox(BoxParameters, Attributes)
+
+def create_box_new( oEditor,
+                    xpos,
+                    ypos,
+                    zpos,
+                    xsize,
+                    ysize,
+                    zsize,
+                    unit,
+                    xpos_f,
+                    ypos_f,
+                    zpos_f,
+                    xsize_f,
+                    ysize_f,
+                    zsize_f,
+                    Name='Box1',
+                    Flags='',
+                    Color=(132, 132, 193),
+                    Transparency=0,
+                    PartCoordinateSystem='Global',
+                    UDMId='',
+                    MaterialValue='"vacuum"',
+                    SolveInside=True,
+                    IsCovered=True,
+                    ):
+    """
+    Author: Winerly
+    Draw a 3D box.
+
+    Note:  This function was contributed by C. A. Donado Morcillo.
+
+    Parameters
+    ----------
+    oEditor : pywin32 COMObject
+        The HFSS editor in which the operation will be performed.
+    xpos : float or hycohanz Expression object
+    ypos : float or hycohanz Expression object
+    zpos : float or hycohanz Expression object
+        The x, y, and z coordinates of the base point of the box.
+    xsize : float or hycohanz Expression object
+    ysize : float or hycohanz Expression object
+    zsize : float or hycohanz Expression object
+        x-, y-, and z-dimensions of the box
+    unit ; str
+        The unit of x,y and z axes.
+    xpos_f : float
+    ypos_f : float
+    zpos_f : float
+        The x, y, and z coordinates of the base point of the box.
+    xsize_f : float
+    ysize_f : float
+    zsize_f : float
+        x-, y-, and z-dimensions of the box.
+    Name : str
+        The requested name of the object.  If this is not available, HFSS 
+        will assign a different name, which is returned by this function.
+    Flags : str
+        Flags associated with this object.  See HFSS Scripting Guide for details.
+    Color : tuple of length=3
+        RGB components of the circle
+    Transparency : float between 0 and 1
+        Fractional transparency.  0 is opaque and 1 is transparent.
+    PartCoordinateSystem : str
+        The name of the coordinate system in which the object is drawn.
+    MaterialName : str
+        Name of the material to assign to the object.  Name must be surrounded 
+        by double quotes.
+    SolveInside : bool
+        Whether to mesh the interior of the object and solve for the fields 
+        inside.
+    IsCovered : bool
+        Whether the rectangle is has a surface or has only edges.
+
+    Returns
+    -------
+    a Box object,modified by JiemingWang
+
+    """
+    BoxParameters = [ "NAME:BoxParameters",
+                    "XPosition:=", Ex(xpos).expr,
+                    "YPosition:=", Ex(ypos).expr,
+                    "ZPosition:=", Ex(zpos).expr,
+                    "XSize:=", Ex(xsize).expr,
+                    "YSize:=", Ex(ysize).expr,
+                    "ZSize:=", Ex(zsize).expr]
+
+    Attributes = [  "NAME:Attributes",
+                    "Name:=", Name,
+                    "Flags:=", Flags,
+                    "Color:=", "({r} {g} {b})".format(r=Color[0], g=Color[1], b=Color[2]),
+                    "Transparency:=", Transparency,
+                    "PartCoordinateSystem:=", PartCoordinateSystem,
+                    "UDMId:=", UDMId,
+                    "MaterialValue:=", MaterialValue,
+                    "SolveInside:=", SolveInside]
+
+    return Box(oEditor.CreateBox(BoxParameters, Attributes), unit, [xpos_f,ypos_f,zpos_f], [xsize_f,ysize_f,zsize_f])
 
 def create_polyline(oEditor, x, y, z, Name="Polyline1", 
                                 Flags="", 
@@ -727,6 +900,88 @@ def paste(oEditor):
     pastelist = oEditor.Paste()
     return pastelist
 
+def duplicate_along_line(oEditor,
+                         selections,
+                         x,y,z,
+                         num_clones,
+                         create_new_objects = False,
+                         new_parts_model_flag="Model"):
+    '''
+    Author: Winerly
+    :param oEditor: pywin32 COMObject
+        The HFSS Editor in which to perform the operation
+    :param selections: list of str
+        The names of objects to duplicate.
+    :param x: str
+        x component of direction to duplicate.
+    :param y: str
+        y component of direction to duplicate.
+    :param z: str
+        z component of direction to duplicate.
+    :param num_clones: int
+        Total number include original object.
+    :param create_new_objects: bool
+        If you want to create new objects or not.
+    :param new_part_model_flag: str
+        I don't know what it is.
+    :return: None
+    '''
+    Selections = ",".join(selections)
+
+    return oEditor.DuplicateAlongLine(["NAME:Selections",
+                                       "Selections:=", Selections,
+                                       "NewPartsModelFlag:=", new_parts_model_flag,],
+                                      ["NAME:DuplicateToAlongLineParameters",
+                                       "CreateNewObjects:=", create_new_objects,
+                                       "XComponent:=", x,
+                                       "YComponent:=", y,
+                                       "ZComponent:=", z,
+                                       "NumClones:=", str(Ex(num_clones).expr)],
+                                      ["NAME:Options",
+                                       "DuplicateAssignments:=", False])
+
+def duplicate_around_axis(oEditor,
+                         selections,
+                         angle,
+                         num_clones,
+                         which_axis = "Z",
+                         create_new_objects = False,
+                         new_parts_model_flag = "Model",):
+    '''
+    Author: Winerly
+    :param oEditor: pywin32 COMObject
+        The HFSS Editor in which to perform the operation
+    :param selections: list of str
+        The names of objects to duplicate.
+    :param x: str
+        x component of direction to duplicate.
+    :param y: str
+        y component of direction to duplicate.
+    :param z: str
+        z component of direction to duplicate.
+    :param num_clones: int
+        Total number include original object.
+    :param create_new_objects: bool
+        If you want to create new objects or not.
+    :param new_part_model_flag: str
+        I don't know what it is.
+    :return: None
+    '''
+    Selections = ",".join(selections)
+
+    return oEditor.DuplicateAroundAxis(["NAME:Selections",
+                                       "Selections:=", Selections,
+                                       "NewPartsModelFlag:=", new_parts_model_flag,],
+                                      ["NAME:DuplicateToAroundAxisParameters",
+                                       "CreateNewObjects:=", create_new_objects,
+                                       "WhichAxis:=", which_axis,
+                                       "AngleStr:=", str(angle) + "deg",
+                                       "NumClones:=", str(Ex(num_clones).expr)],
+                                      ["NAME:Options",
+                                       "DuplicateAssignments:=", False])
+
+
+
 def imprint(oEditor, blanklist, toollist, KeepOriginals=False):
     """
     Imprint an object onto another object.
@@ -923,6 +1178,48 @@ def unite(oEditor, partlist, KeepOriginals=False):
     
     return partlist[0]
 
+
+def intersect(oEditor, partlist, KeepOriginals=False):
+    """
+    Intersect the specified objects.
+
+    Parameters
+    ----------
+    oEditor : pywin32 COMObject
+        The HFSS editor in which the operation will be performed.
+    partlist : list
+        List of part name strings to be intersected.
+    KeepOriginals : bool
+        Whether to keep the original parts for subsequent operations.
+
+    Returns
+    -------
+    objname : str
+        Name of object created by the intersect operation
+
+    Examples
+    --------
+    >>> import Hyphasis as hfss
+    >>> [oAnsoftApp, oDesktop] = hfss.setup_interface()
+    >>> oProject = hfss.new_project(oDesktop)
+    >>> oDesign = hfss.insert_design(oProject, "HFSSDesign1", "DrivenModal")
+    >>> oEditor = hfss.set_active_editor(oDesign, "3D Modeler")
+    >>> tri1 = hfss.create_polyline(oEditor, [0, 1, 0], [0, 0, 1], [0, 0, 0])
+    >>> tri2 = hfss.create_polyline(oEditor, [0, -1, 0], [0, 0, 1], [0, 0, 0])
+    >>> tri3 = hfss.intersect(oEditor, [tri1, tri2])
+    """
+    #    partliststr = ""
+    #    for item in partlist:
+    #        partliststr += (',' + item)
+
+    selectionsarray = ["NAME:Selections", "Selections:=", ','.join(partlist)]
+
+    intersectparametersarray = ["NAME:IntersectParameters", "KeepOriginals:=", KeepOriginals]
+
+    oEditor.Unite(selectionsarray, intersectparametersarray)
+
+    return partlist[0]
+
 def scale(oEditor, partlist, x, y, z):
     """
     Scale specified parts.
@@ -945,7 +1242,7 @@ def scale(oEditor, partlist, x, y, z):
     None
     """
     selections = ", ".join(partlist)
-    selectionsarray = ["NAME:Selections", 
+    selectionsarray = ["NAME:Selections",
                        "Selections:=", selections, 
                        "NewPartsModelFlag:=", "Model"]
   
@@ -1271,7 +1568,7 @@ def connect(oEditor, partlist):
     Connects specified 1-D parts to form a sheet, or specified 2-D parts to 
     form a volume.:
         
-    WARNING:  oEditor.Connect() is a very flaky operation, and the result can 
+    WARNING:  oEditor.Connect() is a very flaky operation, and the result can
     depend on the order that the parts are given to the operation among other 
     seemingly random considerations.  It will very often fail on simple 
     connect operations for no apparent reason.  
